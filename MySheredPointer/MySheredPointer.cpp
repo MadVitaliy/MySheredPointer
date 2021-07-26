@@ -6,7 +6,7 @@ class Date;
 class SharedPointerCounter
 {
 public:
-	explicit SharedPointerCounter() : m_counter(0) 
+	SharedPointerCounter() : m_counter(0) 
 	{
 		std::cout << "\nSharedPointerCounter constructor" << std::endl;
 	}
@@ -124,18 +124,22 @@ private:
 	SharedPointerCounter* mp_counter = nullptr;
 };
 
+template<typename T, typename... Types>
+MySheredPointer<T> MakeShared(Types&&... Params)
+{
+	return MySheredPointer<T>(new T(std::forward<Types>(Params)...));
+}
+
 class Date
 {
 public:
-	Date() 
+	Date() noexcept
 	{
 		m_date = "08.07.2021";
 		m_objectCounter++;
 		m_objectNumber = m_objectCounter;
 	}
-	~Date() 
-	{
-	}
+	~Date() = default;
 
 	void getData()
 	{
@@ -152,7 +156,8 @@ int Date::m_objectCounter = 0;
 
 int main()
 {
-	MySheredPointer<Date> up_date(new Date);
+	//std::make_shared
+	MySheredPointer<Date> up_date = MakeShared<Date>();
 	up_date->getData();
 	MySheredPointer<Date> up_date2(std::move(up_date));
 	up_date2->getData();
